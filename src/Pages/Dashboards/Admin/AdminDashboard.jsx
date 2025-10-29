@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Menu } from "lucide-react";
-import Sidebar from "../../../components/Sidebar";
+import Sidebar from "../../../Components/Sidebar";
 import axios from "axios";
 import {
   Chart as ChartJS,
