@@ -1,4 +1,4 @@
-import Sidebar from "../../../Components/Sidebar";
+import Sidebar from "../../../components/Sidebar";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
@@ -41,12 +41,9 @@ const ManageUsers = () => {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get(
-        import.meta.env.VITE_API_URL_GET_ALL_USERS || "https://bbms-backend-62q5.onrender.com/api/users",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const res = await axios.get(import.meta.env.VITE_API_URL_GET_ALL_USERS, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       if (res.data.success) {
         setUsers(res.data.users || []);
       } else {

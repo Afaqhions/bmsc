@@ -38,7 +38,7 @@ const VerifiedCampaigns = () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_API_URL_CLIENT_CAMPAIGNS || "https://bbms-backend-62q5.onrender.com/api/verifications/client-campaigns"}?email=${encodeURIComponent(userEmail)}`,
+          `${import.meta.env.VITE_API_URL_CLIENT_CAMPAIGNS}?email=${encodeURIComponent(userEmail)}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

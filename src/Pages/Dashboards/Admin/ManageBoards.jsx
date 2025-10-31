@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Menu, Pencil, Trash2 } from "lucide-react";
-import Sidebar from "../../../Components/Sidebar";
+import Sidebar from "../../../components/Sidebar";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -46,7 +46,7 @@ const ManageBoards = () => {
   const fetchBoards = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(import.meta.env.VITE_API_URL_GET_BOARDS || "https://bbms-backend-62q5.onrender.com/api/boards", {
+      const res = await axios.get(import.meta.env.VITE_API_URL_GET_BOARDS, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setBoards(res.data.boards || []);
@@ -68,36 +68,62 @@ const ManageBoards = () => {
   // 📍 Auto-fetch geolocation and reverse geocode
   const getGeoLocation = () => {
     if (!navigator.geolocation) {
-      toast.error("Geolocation is not supported");
+      toast.error("Geolocation is not supported by your browser");
       return;
     }
+
+    toast.info("Fetching your location...");
 
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const { latitude, longitude } = position.coords;
+        toast.info("Got coordinates, fetching address...");
 
         try {
+          // Using a more reliable geocoding service with proper user-agent
           const res = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
+            `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&addressdetails=1`,
+            {
+              headers: {
+                'User-Agent': 'CampaignSoftware/1.0'
+              }
+            }
           );
+
+          if (!res.ok) {
+            throw new Error('Failed to fetch location details');
+          }
+
           const data = await res.json();
-          const location = data.display_name || "Unknown location";
+          
+          // Construct a more readable location string
+          const locationParts = [];
+          if (data.address) {
+            if (data.address.road) locationParts.push(data.address.road);
+            if (data.address.suburb) locationParts.push(data.address.suburb);
+            if (data.address.city) locationParts.push(data.address.city);
+          }
+          
+          const location = locationParts.length > 0 
+            ? locationParts.join(', ') 
+            : (data.display_name || "Unknown location");
 
           setFormData((prev) => ({
             ...prev,
-            Latitude: latitude,
-            Longitude: longitude,
+            Latitude: latitude.toFixed(6),
+            Longitude: longitude.toFixed(6),
             Location: location,
+            City: data.address?.city || prev.City
           }));
 
-          toast.success("Location autofilled successfully");
+          toast.success("Location fetched successfully!");
         } catch (error) {
           console.error("Reverse geocoding error:", error);
-          toast.warn("Coordinates fetched, but address lookup failed.");
+          toast.warn("Got coordinates, but couldn't get address. Please enter manually.");
           setFormData((prev) => ({
             ...prev,
-            Latitude: latitude,
-            Longitude: longitude,
+            Latitude: latitude.toFixed(6),
+            Longitude: longitude.toFixed(6),
           }));
         }
       },
@@ -130,7 +156,7 @@ const ManageBoards = () => {
         );
         toast.success("Board updated successfully");
       } else {
-        await axios.post(import.meta.env.VITE_API_URL_ADD_BOARD, formData, {
+        await axios.post(import.meta.env.VITE_API_URL_CREATE_BOARD, formData, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
         toast.success("Board added successfully");

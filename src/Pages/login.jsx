@@ -26,12 +26,12 @@ const LoginPage = () => {
 
     try {
       console.log("Attempting login with:", {
-        url: import.meta.env.VITE_API_URL_LOGIN || "https://bbms-backend-62q5.onrender.com/api/auth/login",
+        url: import.meta.env.VITE_API_URL_LOGIN,
         email: formData.email
       });
 
       const response = await axios.post(
-        import.meta.env.VITE_API_URL_LOGIN || "https://bbms-backend-62q5.onrender.com/api/auth/login",
+        import.meta.env.VITE_API_URL_LOGIN,
         {
           email: formData.email,
           password: formData.password,
@@ -59,14 +59,14 @@ const LoginPage = () => {
         return;
       }
 
-      // Store auth data
+      // ✅ Store auth data
       login(user, token);
       localStorage.setItem("email", user.email);
 
-      // Set default headers for future requests
+      // ✅ Set default headers for future requests
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-      // Redirect to role dashboard
+      // ✅ Redirect to role dashboard
       navigate(`/${user.role}-dashboard`);
     } catch (err) {
       console.error("Login error:", err);

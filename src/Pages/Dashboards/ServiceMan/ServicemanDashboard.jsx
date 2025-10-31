@@ -43,8 +43,7 @@ export default function ServiceManDashboard() {
     const fetchCampaigns = async () => {
       setLoading(true);
       try {
-        const baseUrl = import.meta.env.VITE_API_URL_GET_CAMPAIGN_BY_SERVICE_MAN || "https://bbms-backend-62q5.onrender.com/api/campaigns/service-man";
-        const url = `${baseUrl}/${encodeURIComponent(user.email)}`;
+        const url = `${import.meta.env.VITE_API_URL_GET_CAMPAIGN_BY_SERVICE_MAN}/${encodeURIComponent(user.email)}`;
         console.log('Fetching campaigns from:', url);
         const res = await fetch(url, {
           headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
@@ -214,10 +213,7 @@ export default function ServiceManDashboard() {
     formData.append("image", capturedImage);
 
     try {
-      await axios.post(
-        import.meta.env.VITE_API_URL_UPLOAD_PIC || "https://bbms-backend-62q5.onrender.com/api/upload-pic",
-        formData,
-        {
+      await axios.post(import.meta.env.VITE_API_URL_UPLOAD_PIC, formData, {
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" },
       });
       toast.success("Report submitted successfully!");
@@ -245,9 +241,7 @@ export default function ServiceManDashboard() {
     if (!window.confirm("Are you sure you want to delete this report?")) return;
 
     try {
-      const response = await axios.delete(
-        `${import.meta.env.VITE_API_URL_DELETE_UPLOAD || "https://bbms-backend-62q5.onrender.com/api/delete-upload"}/${reportId}`,
-        {
+      const response = await axios.delete(`${import.meta.env.VITE_API_URL_DELETE_UPLOAD}/${reportId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       console.log('Delete response:', response);

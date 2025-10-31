@@ -1,14 +1,12 @@
-
 import React, { useEffect, useState } from "react";
-import Sidebar from "../../../Components/Sidebar";
+import Sidebar from "../../../components/Sidebar";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { motion } from "framer-motion";
+import CampaignGalleryModal from "../../../Components/CampaignGalleryModal";
 
 const ManageCampaigns = () => {
   const [campaigns, setCampaigns] = useState([]);
-  const [allBoards, setAllBoards] = useState([]);
   const [filteredBoards, setFilteredBoards] = useState([]);
   const [cities, setCities] = useState([]);
   const [selectedCity, setSelectedCity] = useState("");
@@ -16,6 +14,10 @@ const ManageCampaigns = () => {
   const [clients, setClients] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState(null);
+  const [selectedCampaign, setSelectedCampaign] = useState(null);
+  const [campaignImages, setCampaignImages] = useState([]);
+  const [showGallery, setShowGallery] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -36,16 +38,13 @@ const ManageCampaigns = () => {
       console.log("Fetching data with token:", token);
       try {
         const [campaignRes, boardsRes, usersRes] = await Promise.all([
-          axios.get(
-            import.meta.env.VITE_API_URL_GET_ALL_CAMPAIGNS || "https://bbms-backend-62q5.onrender.com/api/campaigns",
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          ),
-          axios.get(import.meta.env.VITE_API_URL_GET_BOARDS || "https://bbms-backend-62q5.onrender.com/api/boards", {
+          axios.get(import.meta.env.VITE_API_URL_GET_ALL_CAMPAIGNS, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          axios.get(import.meta.env.VITE_API_URL_GET_ALL_USERS || "https://bbms-backend-62q5.onrender.com/api/users", {
+          axios.get(import.meta.env.VITE_API_URL_GET_BOARDS, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          axios.get(import.meta.env.VITE_API_URL_GET_ALL_USERS, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -83,11 +82,8 @@ const ManageCampaigns = () => {
 
         const freeBoards = boardsData.filter(
           (board) =>
-            !usedBoardIds.includes(board._id) ||
-            selectedBoardIds.includes(board._id)
+            !usedBoardIds.includes(board._id) || selectedBoardIds.includes(board._id)
         );
-
-        setAllBoards(freeBoards);
 
         const cityList = [...new Set(freeBoards.map((b) => b.City))].filter(
           Boolean
@@ -348,6 +344,139 @@ const ManageCampaigns = () => {
     }
   };
 
+  const handleImageUpload = async (campaignId, campaign) => {
+    try {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/jpeg, image/jpg, image/png';
+      
+      input.onchange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // Validate file type
+        const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+        if (!validTypes.includes(file.type)) {
+          toast.error('Please select a JPEG or PNG image');
+          return;
+        }
+
+        // Validate file size (max 5MB)
+        const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+        if (file.size > maxSize) {
+          toast.error('Image size should be less than 5MB');
+          return;
+        }
+
+        toast.info('Uploading image...', { 
+          autoClose: false,
+          toastId: 'uploadProgress'
+        });
+        
+        setUploadingImage(true);
+        const formData = new FormData();
+        formData.append('image', file);
+        formData.append('campaignId', campaignId);
+        
+        let locationData = {
+          location: campaign.city || 'Unknown',
+          city: campaign.city || 'Unknown',
+          latitude: 0,
+          longitude: 0
+        };
+
+        // Try to get location if available
+        if (navigator.geolocation) {
+          try {
+              const position = await new Promise((resolve, reject) => {
+                navigator.geolocation.getCurrentPosition(resolve, reject, {
+                  timeout: 5000,
+                  maximumAge: 0,
+                  enableHighAccuracy: false
+                });
+              });
+            
+              locationData = {
+                ...locationData,
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude
+              };
+            } catch (_) {
+              // Silently fall back to default location
+            }
+        }
+
+        // Append location data to form
+        Object.entries(locationData).forEach(([key, value]) => {
+          formData.append(key, value);
+        });
+
+        try {
+          const response = await axios.post(
+            `${import.meta.env.VITE_API_URL}/admin/upload-image`,
+            formData,
+            {
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'multipart/form-data',
+              },
+              onUploadProgress: (progressEvent) => {
+                const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                toast.update('uploadProgress', { 
+                  render: `Uploading: ${progress}%`
+                });
+              }
+            }
+          );
+
+          toast.dismiss('uploadProgress');
+          
+          if (response.data?.data) {
+            toast.success('Image uploaded successfully');
+            // Refresh the images list
+            handleViewImages(campaignId);
+          } else {
+            throw new Error('Invalid server response');
+          }
+        } catch (error) {
+          toast.dismiss('uploadProgress');
+          const errorMessage = error.response?.data?.message || 
+                             error.response?.data?.error || 
+                             'Failed to upload image';
+          toast.error(errorMessage);
+          console.error('Upload failed:', errorMessage);
+        } finally {
+          setUploadingImage(false);
+        }
+      };
+
+      input.click();
+    } catch (error) {
+      toast.error('Failed to initiate image upload');
+      console.error('Image upload initialization error:', error);
+      setUploadingImage(false);
+    }
+  };
+
+  const handleViewImages = async (campaignId) => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/admin/campaign-images/${campaignId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      
+      const campaign = campaigns.find(c => c._id === campaignId);
+      setSelectedCampaign(campaign);
+      setCampaignImages(response.data.data);
+      setShowGallery(true);
+    } catch (err) {
+      console.error('Fetch images error:', err);
+      toast.error('Failed to fetch campaign images');
+    }
+  };
+
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
       <Sidebar />
@@ -534,11 +663,9 @@ const ManageCampaigns = () => {
 
         <div className="mt-8 grid grid-cols-1 gap-4">
           {campaigns.map((campaign) => (
-            <motion.div
+            <div
               key={campaign._id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="border p-4 rounded shadow bg-white"
+              className="border p-4 rounded shadow bg-white transform transition-all duration-300 hover:shadow-lg"
             >
               <h2 className="text-xl font-semibold text-indigo-600">
                 {campaign.name}
@@ -570,20 +697,41 @@ const ManageCampaigns = () => {
               <div className="mt-2 space-x-2">
                 <button
                   onClick={() => handleEdit(campaign)}
-                  className="bg-yellow-400 text-black px-4 py-1 rounded"
+                  className="bg-yellow-400 text-black px-4 py-1 rounded hover:bg-yellow-500"
                 >
                   Edit
                 </button>
                 <button
                   onClick={() => handleDelete(campaign._id)}
-                  className="bg-red-600 text-white px-4 py-1 rounded"
+                  className="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-700"
                 >
                   Delete
                 </button>
+                <button
+                  onClick={() => handleImageUpload(campaign._id, campaign)}
+                  className="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-600"
+                  disabled={uploadingImage}
+                >
+                  {uploadingImage ? "Uploading..." : "Upload Image"}
+                </button>
+                <button
+                  onClick={() => handleViewImages(campaign._id)}
+                  className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600"
+                >
+                  View Images
+                </button>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
+
+        <CampaignGalleryModal
+          isOpen={showGallery}
+          onClose={() => setShowGallery(false)}
+          images={campaignImages}
+          campaignName={selectedCampaign?.name || ""}
+          campaign={selectedCampaign}
+        />
       </div>
     </div>
   );

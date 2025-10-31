@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Sidebar from "../../../Components/Sidebar";
+import Sidebar from "../../../components/Sidebar";
 import axios from "axios";
 import { Menu } from "lucide-react";
 import {
@@ -43,21 +43,10 @@ const ViewBoardStats = () => {
       }
 
       const [boardsRes, campaignsRes] = await Promise.all([
-        axios.get(
-          import.meta.env.VITE_API_URL_SEE_BOARD || "https://bbms-backend-62q5.onrender.com/api/boards",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        ),
-        axios.get(
-          import.meta.env.VITE_API_URL_SEE_CAMPAIGNS || "https://bbms-backend-62q5.onrender.com/api/campaigns",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        ),
-        axios.get(
-          import.meta.env.VITE_API_URL_SEE_CAMPAIGNS || "https://bbms-backend-62q5.onrender.com/api/campaigns",
-          {
+        axios.get(import.meta.env.VITE_API_URL_SEE_BOARD, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        axios.get(import.meta.env.VITE_API_URL_SEE_CAMPAIGNS, {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);
