@@ -41,7 +41,7 @@ const AdminDashboard = () => {
       }
 
       const [usersRes, boardsRes, campaignsRes] = await Promise.all([
-        axios.get(import.meta.env.VITE_API_URL_GET_ALL_USERS, {
+        axios.get(import.meta.env.VITE_API_URL_GET_ALL_USERS || "https://bbms-backend-62q5.onrender.com/api/users", {
           headers: { Authorization: `Bearer ${token}` },
         }),
         axios.get(import.meta.env.VITE_API_URL_GET_BOARDS, {
