@@ -23,15 +23,14 @@ const ClientDashboard = () => {
       try {
         console.log('Fetching campaigns for client:', user.email);
         const response = await axios.get(
-          `${import.meta.env.VITE_API_URL_CLIENT_CAMPAIGNS}/${encodeURIComponent(user.email)}`,
+          import.meta.env.VITE_API_URL_CLIENT_CAMPAIGNS || "https://bbms-backend-62q5.onrender.com/api/verifications/client-campaigns",
           {
             headers: {
               Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
+            }
           }
         );
-
+        
         console.log('Campaign response:', response.data);
         const campaignsData = response.data?.data || [];
         console.log('Processed campaigns:', campaignsData);

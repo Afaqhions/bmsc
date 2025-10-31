@@ -46,7 +46,7 @@ const ManageBoards = () => {
   const fetchBoards = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(import.meta.env.VITE_API_URL_GET_BOARDS, {
+      const res = await axios.get(import.meta.env.VITE_API_URL_GET_BOARDS || "https://bbms-backend-62q5.onrender.com/api/boards", {
         headers: { Authorization: `Bearer ${token}` }
       });
       setBoards(res.data.boards || []);

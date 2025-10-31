@@ -34,8 +34,10 @@ const VerifyUploads = () => {
     try {
       setIsLoading(true);
       const res = await axios.get(
-        import.meta.env.VITE_API_URL_ADMIN_GET_UPLOADS,
-        { headers: { Authorization: `Bearer ${token}` } }
+        import.meta.env.VITE_API_URL_ADMIN_GET_ALL_UPLOADS || "https://bbms-backend-62q5.onrender.com/api/admin-get-uploads",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
       const data = res.data.data || [];
       setUploads(data);
