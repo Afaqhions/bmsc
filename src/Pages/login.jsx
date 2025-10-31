@@ -26,7 +26,7 @@ const LoginPage = () => {
 
     try {
       console.log("Attempting login with:", {
-        url: import.meta.env.VITE_API_URL_LOGIN,
+        url: import.meta.env.VITE_API_URL_LOGIN || "https://bbms-backend-62q5.onrender.com/api/auth/login",
         email: formData.email
       });
 

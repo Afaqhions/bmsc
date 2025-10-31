@@ -41,13 +41,13 @@ const AdminDashboard = () => {
       }
 
       const [usersRes, boardsRes, campaignsRes] = await Promise.all([
-        axios.get(import.meta.env.VITE_API_URL_GET_ALL_USERS, {
+        axios.get(import.meta.env.VITE_API_URL_GET_ALL_USERS || "https://bbms-backend-62q5.onrender.com/api/users", {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        axios.get(import.meta.env.VITE_API_URL_GET_BOARDS, {
+        axios.get(import.meta.env.VITE_API_URL_GET_BOARDS || "https://bbms-backend-62q5.onrender.com/api/boards", {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        axios.get(import.meta.env.VITE_API_URL_GET_ALL_CAMPAIGNS, {
+        axios.get(import.meta.env.VITE_API_URL_GET_ALL_CAMPAIGNS || "https://bbms-backend-62q5.onrender.com/api/campaigns", {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);

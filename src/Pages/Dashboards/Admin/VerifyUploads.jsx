@@ -52,10 +52,10 @@ const VerifyUploads = () => {
 
   const fetchCampaigns = async () => {
     try {
-      const res = await axios.get(import.meta.env.VITE_API_URL_SEE_CAMPAIGNS, {
+      const res = await axios.get(import.meta.env.VITE_API_URL_ADMIN_GET_ALL_CAMPAIGNS || "https://bbms-backend-62q5.onrender.com/api/admin-get-campaigns", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setCampaigns(res.data || []);
+      setCampaigns(res.data.data || []);
     } catch (err) {
       console.error("Fetch campaigns error", err);
       toast.error("Failed to load campaign durations");
@@ -65,7 +65,7 @@ const VerifyUploads = () => {
   const verifyUpload = async (uploadId) => {
     try {
       await axios.put(
-        `${import.meta.env.VITE_API_URL_ADMIN_VERIFY_UPLOAD}/${uploadId}`,
+        `https://bbms-backend-62q5.onrender.com/api/admin/verify-upload/${uploadId}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
