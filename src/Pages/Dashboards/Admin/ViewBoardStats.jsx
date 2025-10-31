@@ -52,6 +52,12 @@ const ViewBoardStats = () => {
         axios.get(
           import.meta.env.VITE_API_URL_SEE_CAMPAIGNS || "https://bbms-backend-62q5.onrender.com/api/campaigns",
           {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        ),
+        axios.get(
+          import.meta.env.VITE_API_URL_SEE_CAMPAIGNS || "https://bbms-backend-62q5.onrender.com/api/campaigns",
+          {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);

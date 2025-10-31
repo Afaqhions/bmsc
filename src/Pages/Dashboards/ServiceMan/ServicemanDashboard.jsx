@@ -43,7 +43,8 @@ export default function ServiceManDashboard() {
     const fetchCampaigns = async () => {
       setLoading(true);
       try {
-        const url = `${import.meta.env.VITE_API_URL_GET_CAMPAIGN_BY_SERVICE_MAN}/${encodeURIComponent(user.email)}`;
+        const baseUrl = import.meta.env.VITE_API_URL_GET_CAMPAIGN_BY_SERVICE_MAN || "https://bbms-backend-62q5.onrender.com/api/campaigns/service-man";
+        const url = `${baseUrl}/${encodeURIComponent(user.email)}`;
         console.log('Fetching campaigns from:', url);
         const res = await fetch(url, {
           headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
