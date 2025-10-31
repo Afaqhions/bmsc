@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Menu, ChevronDown, Search, X, Check } from "lucide-react";
 import axios from "axios";
-import Sidebar from "../../../components/Sidebar";
+import Sidebar from "../../../Components/Sidebar";
 
 const VerifyUploads = () => {
   const [uploads, setUploads] = useState([]);

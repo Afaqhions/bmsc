@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Menu, Pencil, Trash2 } from "lucide-react";
-import Sidebar from "../../../components/Sidebar";
+import Sidebar from "../../../Components/Sidebar";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
