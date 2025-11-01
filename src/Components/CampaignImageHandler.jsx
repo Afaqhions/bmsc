@@ -18,7 +18,11 @@ const CampaignImageHandler = ({ campaignId, campaign, token, onSuccess }) => {
         
         console.log('Selected file:', file.name, file.type, file.size);
 
+<<<<<<< HEAD
         // Validate file type and check if file is corrupted
+=======
+        // Validate file type
+>>>>>>> 11e19a4acdff04d816646f712fad3e9cd2222306
         const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
         if (!validTypes.includes(file.type)) {
           toast.error('Please select a JPEG or PNG image');
@@ -32,6 +36,7 @@ const CampaignImageHandler = ({ campaignId, campaign, token, onSuccess }) => {
           return;
         }
 
+<<<<<<< HEAD
         // Validate image can be loaded
         try {
           await new Promise((resolve, reject) => {
@@ -45,6 +50,8 @@ const CampaignImageHandler = ({ campaignId, campaign, token, onSuccess }) => {
           return;
         }
 
+=======
+>>>>>>> 11e19a4acdff04d816646f712fad3e9cd2222306
         // Show upload progress
         const uploadToastId = toast.info('Preparing to upload...', { 
           autoClose: false,

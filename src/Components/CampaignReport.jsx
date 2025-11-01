@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 import React, { useState, useEffect } from 'react';
 import {
@@ -19,6 +20,16 @@ const CampaignReport = ({ campaign, images }) => {
   const [imagesLoaded, setImagesLoaded] = useState(false);
   const [imageLoadErrors, setImageLoadErrors] = useState([]);
   const [viewMode, setViewMode] = useState('grid');
+=======
+import React, { useState } from 'react';
+import { FaPrint, FaMapMarkerAlt, FaClock, FaTable, FaStream, FaFileDownload, FaSpinner } from 'react-icons/fa';
+import pptxgen from 'pptxgenjs';
+import { saveAs } from 'file-saver';
+
+const CampaignReport = ({ campaign, images }) => {
+  const [viewMode, setViewMode] = useState('timeline');
+  const [generating, setGenerating] = useState(false);
+>>>>>>> 11e19a4acdff04d816646f712fad3e9cd2222306
 
   useEffect(() => {
     if (!images || images.length === 0) {
@@ -227,13 +238,19 @@ const CampaignReport = ({ campaign, images }) => {
     }
   };
 
+<<<<<<< HEAD
   const formatDate = (dateString) =>
     new Date(dateString).toLocaleString('en-US', {
+=======
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleString('en-US', {
+>>>>>>> 11e19a4acdff04d816646f712fad3e9cd2222306
       weekday: 'short',
       year: 'numeric',
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
+<<<<<<< HEAD
       minute: '2-digit',
     });
 
@@ -241,6 +258,19 @@ const CampaignReport = ({ campaign, images }) => {
 
   return (
     <div className="p-6 bg-gray-50">
+=======
+      minute: '2-digit'
+    });
+  };
+
+  const handlePrint = () => {
+    window.print();
+  };
+
+  return (
+    <div className="p-6 bg-gray-50">
+      {/* Report Header */}
+>>>>>>> 11e19a4acdff04d816646f712fad3e9cd2222306
       <div className="mb-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-gray-800">Campaign Report</h1>
@@ -249,7 +279,13 @@ const CampaignReport = ({ campaign, images }) => {
               <button
                 onClick={() => setViewMode('timeline')}
                 className={`px-3 py-1.5 rounded ${
+<<<<<<< HEAD
                   viewMode === 'timeline' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'
+=======
+                  viewMode === 'timeline'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-200 text-gray-700'
+>>>>>>> 11e19a4acdff04d816646f712fad3e9cd2222306
                 }`}
               >
                 <FaStream className="inline mr-2" /> Timeline
@@ -257,7 +293,13 @@ const CampaignReport = ({ campaign, images }) => {
               <button
                 onClick={() => setViewMode('grid')}
                 className={`px-3 py-1.5 rounded ${
+<<<<<<< HEAD
                   viewMode === 'grid' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'
+=======
+                  viewMode === 'grid'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-200 text-gray-700'
+>>>>>>> 11e19a4acdff04d816646f712fad3e9cd2222306
                 }`}
               >
                 <FaTable className="inline mr-2" /> Grid
@@ -276,18 +318,29 @@ const CampaignReport = ({ campaign, images }) => {
             >
               {generating ? (
                 <>
+<<<<<<< HEAD
                   <FaSpinner className="animate-spin" /> Generating PPT... ({progress.current}/
                   {progress.total})
                 </>
               ) : (
                 <>
                   <FaFileDownload /> Export to PPT
+=======
+                  <FaSpinner className="animate-spin" />
+                  Generating PPT...
+                </>
+              ) : (
+                <>
+                  <FaFileDownload />
+                  Export to PPT
+>>>>>>> 11e19a4acdff04d816646f712fad3e9cd2222306
                 </>
               )}
             </button>
           </div>
         </div>
 
+<<<<<<< HEAD
         {error && (
           <div className="text-red-600 text-sm bg-red-50 p-2 rounded mb-4">
             ⚠️ {error}
@@ -378,6 +431,150 @@ const CampaignReport = ({ campaign, images }) => {
           </div>
         )}
       </div>
+=======
+        {/* Campaign Summary */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div className="bg-white p-6 rounded-lg shadow-sm">
+            <h2 className="text-lg font-semibold mb-4">Campaign Details</h2>
+            <div className="space-y-3">
+              <p><strong>Name:</strong> {campaign.name}</p>
+              <p><strong>Client:</strong> {campaign.clientEmail}</p>
+              <p><strong>Duration:</strong> {formatDate(campaign.startDate)} - {formatDate(campaign.endDate)}</p>
+              <p><strong>City:</strong> {campaign.city}</p>
+              <p><strong>Number of Boards:</strong> {campaign.noOfBoards}</p>
+              <p>
+                <strong>Service Personnel:</strong><br />
+                {Array.isArray(campaign.serviceManEmail) 
+                  ? campaign.serviceManEmail.map(email => (
+                      <span key={email} className="inline-block bg-gray-100 px-2 py-1 rounded mr-2 mb-2">
+                        {email}
+                      </span>
+                    ))
+                  : campaign.serviceManEmail}
+              </p>
+            </div>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow-sm">
+            <h2 className="text-lg font-semibold mb-4">Image Statistics</h2>
+            <div className="space-y-3">
+              <p><strong>Total Images:</strong> {images.length}</p>
+              <p>
+                <strong>Coverage:</strong> {
+                  Math.round((images.length / campaign.noOfBoards) * 100)
+                }%
+              </p>
+              <p><strong>First Upload:</strong> {
+                images.length > 0 
+                  ? formatDate(images[0].timestamp || images[0].createdAt || images[0].dateTime)
+                  : 'N/A'
+              }</p>
+              <p><strong>Latest Upload:</strong> {
+                images.length > 0
+                  ? formatDate(images[images.length - 1].timestamp || images[images.length - 1].createdAt || images[images.length - 1].dateTime)
+                  : 'N/A'
+              }</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Images Section */}
+      <div>
+        <h2 className="text-xl font-semibold mb-4">Campaign Images</h2>
+        {viewMode === 'timeline' ? (
+          <div className="space-y-4">
+            {images.map((image, index) => (
+              <div key={index} className="bg-white p-4 rounded-lg shadow-sm flex gap-4">
+                <div className="w-48 h-48 flex-shrink-0">
+                  <img
+                    src={image.imageUrl || image.url}
+                    alt={`Upload ${index + 1}`}
+                    className="w-full h-full object-cover rounded"
+                  />
+                </div>
+                <div className="flex-grow">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="text-lg font-medium">Upload #{index + 1}</p>
+                      <p className="text-gray-500 flex items-center gap-2">
+                        <FaClock className="inline" /> 
+                        {formatDate(image.timestamp || image.createdAt || image.dateTime)}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-4 space-y-2">
+                    <p className="flex items-center gap-2">
+                      <FaMapMarkerAlt className="text-gray-400" />
+                      {image.location || image.liveLocation || 'Location not specified'}
+                    </p>
+                    {image.latitude && image.longitude && (
+                      <p className="text-sm text-gray-500">
+                        Coordinates: {image.latitude}, {image.longitude}
+                      </p>
+                    )}
+                    <p className="text-sm text-gray-600">
+                      Uploaded by: {image.uploadedBy || image.serviceManEmail || 'Unknown'}
+                    </p>
+                    {image.city && (
+                      <p className="text-sm text-gray-600">
+                        City: {image.city}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {images.map((image, index) => (
+              <div key={index} className="bg-white rounded-lg overflow-hidden shadow-sm">
+                <div className="aspect-w-4 aspect-h-3">
+                  <img
+                    src={image.imageUrl || image.url}
+                    alt={`Upload ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="p-4">
+                  <p className="text-sm font-medium">
+                    {formatDate(image.timestamp || image.createdAt || image.dateTime)}
+                  </p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    {image.location || image.liveLocation || 'Location not specified'}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    By: {image.uploadedBy || image.serviceManEmail || 'Unknown'}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Print Styles */}
+      <style>
+        {`
+          @media print {
+            body {
+              print-color-adjust: exact;
+              -webkit-print-color-adjust: exact;
+            }
+            .print\\:hidden {
+              display: none !important;
+            }
+            .shadow-sm {
+              box-shadow: none !important;
+            }
+            .bg-gray-50 {
+              background-color: white !important;
+            }
+          }
+        `}
+      </style>
+>>>>>>> 11e19a4acdff04d816646f712fad3e9cd2222306
     </div>
   );
 };
