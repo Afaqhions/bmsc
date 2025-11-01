@@ -27,7 +27,7 @@ const ManageCampaigns = () => {
     selectedBoards: [],
     clientEmail: "",
     serviceManEmail: [], 
-    price: "",
+    // price: "",
   });
 
   const token = localStorage.getItem("token");
@@ -212,7 +212,7 @@ const ManageCampaigns = () => {
       selectedBoards,
       clientEmail,
       serviceManEmail,
-      price,
+      // price,
     } = formData;
 
     if (
@@ -222,7 +222,7 @@ const ManageCampaigns = () => {
       !noOfBoards ||
       !clientEmail ||
       !serviceManEmail ||
-      !price ||
+      // !price ||
       selectedBoards.length === 0
     ) {
       toast.error("All required fields must be filled and boards selected.");
@@ -248,7 +248,7 @@ const ManageCampaigns = () => {
       clientName,
       serviceManEmail,
       city: selectedCity,
-      price: parseFloat(price),
+      // price: parseFloat(price),
     };
 
     try {
@@ -271,7 +271,7 @@ const ManageCampaigns = () => {
         selectedBoards: [],
         clientEmail: "",
         serviceManEmail: [],
-        price: "",
+        // price: "",
       });
       setSelectedCity("");
       setFilteredBoards([]);
@@ -320,7 +320,7 @@ const ManageCampaigns = () => {
       ),
       clientEmail: campaign.clientEmail,
       serviceManEmail: campaign.serviceManEmail || [],
-      price: campaign.price,
+      // price: campaign.price,
     });
 
     setShowForm(true);
@@ -496,7 +496,7 @@ const ManageCampaigns = () => {
                 selectedBoards: [],
                 clientEmail: "",
                 serviceManEmail: [],
-                price: "",
+                // price: "",
               });
               setSelectedCity("");
               setFilteredBoards([]);
@@ -579,17 +579,17 @@ const ManageCampaigns = () => {
               </select>
             </label>
 
-            <label>
+          {/* <label>
               Price
               <input
                 type="number"
                 name="price"
                 value={formData.price}
                 onChange={handleChange}
-                required
+
                 className="border p-2 w-full"
               />
-            </label>
+            </label>  */}
 
             <label className="col-span-2">
               Select City
@@ -677,10 +677,10 @@ const ManageCampaigns = () => {
                   ? campaign.serviceManEmail.join(", ")
                   : campaign.serviceManEmail || "—"}
               </p>
-              <p>
+              {/* <p>
                 💰 Price: PKR{" "}
                 {campaign.price?.toLocaleString?.() ?? campaign.price}
-              </p>
+              </p> */}
               <p>📋 Boards: {campaign.noOfBoards}</p>
               <p>
                 📅 Duration: {campaign.startDate.slice(0, 10)} →{" "}
