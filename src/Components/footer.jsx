@@ -32,7 +32,7 @@ const Footer = () => {
               <Link to="/client-dashboard" className="hover:text-yellow-300 transition duration-300">Client Portal</Link>
             </li>
             <li>
-              <Link to="/service-dashboard" className="hover:text-yellow-300 transition duration-300">Service Staff</Link>
+              <Link to="/service-dashboard" className="hover:text-yellow-300 transition duration-300">Tracker Portal</Link>
             </li>
           </ul>
         </div>
@@ -42,12 +42,12 @@ const Footer = () => {
           <h3 className="text-lg font-semibold mb-4">Contact Us</h3>
           <ul className="text-sm space-y-2">
             <li>
-              Email: <a href="mailto:support@campaignsoft.com" className="hover:text-yellow-300 transition duration-300">support@campaignsoft.com</a>
+              Email: <a href="mailto:support@campaignsoft.com" className="hover:text-yellow-300 transition duration-300">hionsafaq@gmail.com</a>
             </li>
             <li>
-              Phone: <a href="tel:+923001234567" className="hover:text-yellow-300 transition duration-300">+92 300 1234567</a>
+              Phone: <a href="tel:+923001234567" className="hover:text-yellow-300 transition duration-300">+92 309 7876497 | +92 300 4173182</a>
             </li>
-            <li>Location: Karachi, Pakistan</li>
+            <li>Location: Lahore, Pakistan</li>
           </ul>
         </div>
 
