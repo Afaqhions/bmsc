@@ -717,7 +717,7 @@ const ManageCampaigns = () => {
   const [campaigns, setCampaigns] = useState([]);
   const [filteredBoards, setFilteredBoards] = useState([]);
   const [cities, setCities] = useState([]);
-  const [selectedCity, setSelectedCity] = useState("");
+  const [selectedCities, setSelectedCities] = useState([]);
   const [serviceMen, setServiceMen] = useState([]);
   const [clients, setClients] = useState([]);
   const [showForm, setShowForm] = useState(false);
@@ -726,6 +726,7 @@ const ManageCampaigns = () => {
   const [campaignImages, setCampaignImages] = useState([]);
   const [showGallery, setShowGallery] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const [formData, setFormData] = useState({
     name: "",
@@ -804,10 +805,10 @@ const ManageCampaigns = () => {
         const cityList = [...new Set(freeBoards.map((b) => b.City))].filter(Boolean);
         setCities(cityList);
 
-        if (selectedCity) {
+        if (selectedCities.length > 0) {
           setFilteredBoards(
             freeBoards.filter(
-              (b) => b.City.toLowerCase() === selectedCity.toLowerCase()
+              (b) => selectedCities.some(city => b.City.toLowerCase() === city.toLowerCase())
             )
           );
         }
@@ -824,89 +825,123 @@ const ManageCampaigns = () => {
     };
 
     fetchData();
-  }, [token, editId, selectedCity]);
+  }, [token, editId, selectedCities]);
 
-  // Fetch service men when selectedCity changes
+  // Fetch service men when selectedCities changes
   useEffect(() => {
     const fetchServiceMen = async () => {
-      if (!selectedCity) {
+      if (selectedCities.length === 0) {
         setServiceMen([]);
         return;
       }
 
       try {
-        const url = `${import.meta.env.VITE_API_URL_GET_SERVICEMAN_BY_CITY}/${encodeURIComponent(
-          selectedCity
-        )}`;
-        const res = await axios.get(url, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        // Fetch service men for all selected cities
+        const allServiceMen = [];
+        const uniqueServiceMen = {};
+        
+        for (const city of selectedCities) {
+          try {
+            const url = `${import.meta.env.VITE_API_URL_GET_SERVICEMAN_BY_CITY}/${encodeURIComponent(
+              city
+            )}`;
+            const res = await axios.get(url, {
+              headers: { Authorization: `Bearer ${token}` },
+            });
 
-        const rawData = Array.isArray(res.data)
-          ? res.data
-          : Array.isArray(res.data?.serviceMen)
-          ? res.data.serviceMen
-          : Array.isArray(res.data?.data)
-          ? res.data.data
-          : [];
+            const rawData = Array.isArray(res.data)
+              ? res.data
+              : Array.isArray(res.data?.serviceMen)
+              ? res.data.serviceMen
+              : Array.isArray(res.data?.data)
+              ? res.data.data
+              : [];
 
-        const serviceMenList = rawData.map((item) => {
-          if (typeof item === "string") {
-            return { email: item, name: item };
+            rawData.forEach((item) => {
+              let servicePerson;
+              if (typeof item === "string") {
+                servicePerson = { email: item, name: item };
+              } else {
+                servicePerson = {
+                  _id: item._id,
+                  email: item.email || item.serviceManEmail || "",
+                  name: item.name || item.fullName || "No Name",
+                };
+              }
+              // Use email as unique key to avoid duplicates
+              const key = servicePerson.email || servicePerson._id;
+              if (key && !uniqueServiceMen[key]) {
+                uniqueServiceMen[key] = servicePerson;
+                allServiceMen.push(servicePerson);
+              }
+            });
+          } catch (err) {
+            console.error(`Failed to fetch service men for city ${city}:`, err);
           }
-          return {
-            _id: item._id,
-            email: item.email || item.serviceManEmail || "",
-            name: item.name || item.fullName || "No Name",
-          };
-        });
+        }
 
-        setServiceMen(serviceMenList);
+        setServiceMen(allServiceMen);
       } catch (err) {
         setServiceMen([]);
-        toast.error("Failed to fetch service men for the selected city.");
+        toast.error("Failed to fetch service men for the selected cities.");
         console.error("Service men fetch error:", err);
       }
     };
 
     fetchServiceMen();
-  }, [selectedCity, token]);
+  }, [selectedCities, token]);
 
   const handleCityChange = async (e) => {
-    const city = e.target.value;
-    setSelectedCity(city);
+    const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
+    setSelectedCities(selectedOptions);
     setFormData((prev) => ({
       ...prev,
       selectedBoards: [],
       serviceManEmail: [],
     }));
 
-    if (city) {
+    if (selectedOptions.length > 0) {
       try {
-        const boardsUrl = `${import.meta.env.VITE_API_URL_GET_BOARDS_BY_CITY}/${encodeURIComponent(
-          city
-        )}`;
-        console.log('Fetching boards from:', boardsUrl);
+        // Fetch boards for all selected cities
+        const allBoards = [];
+        const uniqueBoards = {};
         
-        const res = await axios.get(boardsUrl, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        for (const city of selectedOptions) {
+          try {
+            const boardsUrl = `${import.meta.env.VITE_API_URL_GET_BOARDS_BY_CITY}/${encodeURIComponent(
+              city
+            )}`;
+            console.log('Fetching boards from:', boardsUrl);
+            
+            const res = await axios.get(boardsUrl, {
+              headers: { Authorization: `Bearer ${token}` },
+            });
 
-        console.log("Raw boards response:", res.data);
+            console.log("Raw boards response:", res.data);
 
-        const boardsData = Array.isArray(res.data)
-          ? res.data
-          : res.data?.boards || res.data?.data || [];
+            const boardsData = Array.isArray(res.data)
+              ? res.data
+              : res.data?.boards || res.data?.data || [];
 
-        console.log("Processed boards data:", boardsData);
-        
-        if (boardsData.length === 0) {
-          console.log('No boards found for city:', city);
+            console.log("Processed boards data:", boardsData);
+            
+            if (boardsData.length === 0) {
+              console.log('No boards found for city:', city);
+            }
+
+            boardsData.forEach((board) => {
+              if (!uniqueBoards[board._id]) {
+                uniqueBoards[board._id] = board;
+                allBoards.push(board);
+              }
+            });
+          } catch (error) {
+            console.error(`Failed to fetch boards for city ${city}:`, error);
+          }
         }
-
-        setFilteredBoards(boardsData);
+        setFilteredBoards(allBoards);
       } catch (error) {
-        toast.error("Failed to fetch boards for selected city.");
+        toast.error("Failed to fetch boards for selected cities.");
         setFilteredBoards([]);
         console.error("Board fetch error:", error);
       }
@@ -950,7 +985,7 @@ const ManageCampaigns = () => {
       !clientEmail ||
       !serviceManEmail?.length ||
       !selectedBoards?.length ||
-      !selectedCity
+      !selectedCities?.length
     ) {
       toast.error("All required fields must be filled and boards selected.");
       return;
@@ -976,7 +1011,7 @@ const ManageCampaigns = () => {
       clientEmail: clientEmail.trim(),
       clientName,
       serviceManEmail: Array.isArray(serviceManEmail) ? serviceManEmail : [serviceManEmail],
-      city: selectedCity,
+      cities: selectedCities,
       price: 0
     };
 
@@ -1001,7 +1036,7 @@ const ManageCampaigns = () => {
         clientEmail: "",
         serviceManEmail: []
       });
-      setSelectedCity("");
+      setSelectedCities([]);
       setFilteredBoards([]);
 
       const updated = await axios.get(
@@ -1025,20 +1060,23 @@ const ManageCampaigns = () => {
 
   const handleEdit = (campaign) => {
     console.log("Editing campaign:", campaign);
-    let cityFromCampaign = "";
+    let citiesFromCampaign = [];
     if (campaign.selectedBoards && campaign.selectedBoards.length > 0) {
-      const firstBoard = campaign.selectedBoards[0];
-      cityFromCampaign =
-        typeof firstBoard === "object" ? firstBoard.City || "" : "";
-      console.log("City from campaign:", cityFromCampaign);
+      const uniqueCities = new Set();
+      campaign.selectedBoards.forEach((board) => {
+        const city = typeof board === "object" ? board.City : "";
+        if (city) uniqueCities.add(city);
+      });
+      citiesFromCampaign = Array.from(uniqueCities);
+      console.log("Cities from campaign:", citiesFromCampaign);
     }
 
     setEditId(campaign._id);
 
-    if (cityFromCampaign) {
-      setSelectedCity(cityFromCampaign);
+    if (citiesFromCampaign.length > 0) {
+      setSelectedCities(citiesFromCampaign);
     } else {
-      setSelectedCity("");
+      setSelectedCities([]);
     }
 
     setFormData({
@@ -1147,7 +1185,7 @@ const ManageCampaigns = () => {
                 clientEmail: "",
                 serviceManEmail: [],
               });
-              setSelectedCity("");
+              setSelectedCities([]);
               setFilteredBoards([]);
             }
           }}
@@ -1229,14 +1267,15 @@ const ManageCampaigns = () => {
             </label>
 
             <label className="col-span-2">
-              Select City
+              Select Cities
               <select
-                value={selectedCity}
+                value={selectedCities}
                 onChange={handleCityChange}
                 className="border p-2 w-full"
+                multiple
                 required
               >
-                <option value="">-- Select City --</option>
+                <option value="">-- Select Cities --</option>
                 {cities.map((city, idx) => (
                   <option key={idx} value={city}>
                     {city}
@@ -1258,9 +1297,9 @@ const ManageCampaigns = () => {
                 <option value="">-- Select Service Man --</option>
                 {serviceMen.length === 0 && (
                   <option value="" disabled>
-                    {selectedCity
+                    {selectedCities.length > 0
                       ? "No service men found"
-                      : "Select a city first"}
+                      : "Select cities first"}
                   </option>
                 )}
                 {serviceMen.map(({ _id, email, name }) => (
@@ -1298,8 +1337,46 @@ const ManageCampaigns = () => {
           </form>
         )}
 
+        {/* Search Section */}
+        <div className="mt-8 mb-6 p-4 bg-gray-50 rounded-lg shadow">
+          <h3 className="text-lg font-semibold mb-4 text-gray-800">Search Campaigns</h3>
+          <div className="grid grid-cols-1 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Search by Campaign Name
+              </label>
+              <input
+                type="text"
+                placeholder="Enter campaign name..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+          </div>
+          <button
+            onClick={() => {
+              setSearchQuery("");
+            }}
+            className="mt-4 bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500 transition-colors"
+          >
+            Clear Filters
+          </button>
+        </div>
+
         <div className="mt-8 grid grid-cols-1 gap-4">
-          {campaigns.map((campaign) => (
+          {campaigns
+            .filter((campaign) => {
+              // Filter by campaign name
+              const matchesName = campaign.name
+                .toLowerCase()
+                .includes(searchQuery.toLowerCase());
+
+              return matchesName;
+            })
+            .map((campaign) => {
+              const campaignCities = campaign.cities || (campaign.city ? [campaign.city] : []);
+              return (
             <div
               key={campaign._id}
               className="border p-4 rounded shadow bg-white transform transition-all duration-300 hover:shadow-lg"
@@ -1314,6 +1391,7 @@ const ManageCampaigns = () => {
                   ? campaign.serviceManEmail.join(", ")
                   : campaign.serviceManEmail || "—"}
               </p>
+              <p>🏙️ Cities: {campaignCities.join(", ") || "—"}</p>
               <p>📋 Number of Boards: {campaign.noOfBoards}</p>
               <p>
                 📅 Duration: {campaign.startDate.slice(0, 10)} →{" "}
@@ -1364,7 +1442,8 @@ const ManageCampaigns = () => {
                 </button>
               </div>
             </div>
-          ))}
+              );
+            })}
         </div>
 
         {/* Image Gallery Modal */}
