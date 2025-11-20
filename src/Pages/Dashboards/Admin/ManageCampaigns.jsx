@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import CampaignGalleryModal from "../../../Components/CampaignGalleryModal";
 import CampaignImageHandler from "../../../Components/CampaignImageHandler";
 import LoadingSpinner from "../../../Components/LoadingSpinner";
+import { Menu } from "lucide-react";
 //   const [uploadingImage, setUploadingImage] = useState(false);
 
 //   const [formData, setFormData] = useState({
@@ -727,6 +728,7 @@ const ManageCampaigns = () => {
   const [showGallery, setShowGallery] = useState(false);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -1158,9 +1160,20 @@ const ManageCampaigns = () => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen">
-      <Sidebar />
-      <div className="p-6 w-full">
+    <div className="flex h-screen overflow-hidden bg-gray-100">
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+
+      <div className="flex-1 flex flex-col w-full overflow-y-auto">
+        {/* Mobile topbar */}
+        <div className="p-4 bg-white shadow-md md:hidden flex justify-between items-center">
+          <h1 className="text-xl font-bold text-gray-800">Manage Campaigns</h1>
+          <button onClick={() => setSidebarOpen(true)}>
+            <Menu size={24} />
+          </button>
+        </div>
+
+        {/* Main content */}
+        <div className="p-6">
         <ToastContainer />
         
         {loading ? (
@@ -1462,6 +1475,7 @@ const ManageCampaigns = () => {
         )}
           </>
         )}
+        </div>
       </div>
     </div>
   );

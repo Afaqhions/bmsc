@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Menu } from "lucide-react";
 
 // Predefined list of cities for selection
 const CITY_OPTIONS = [
@@ -14,9 +15,9 @@ const CITY_OPTIONS = [
   "Rawalpindi",
 ];
 
-const ManageUsers = () => {
+  const ManageUsers = () => {
   const [users, setUsers] = useState([]);
-
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -254,9 +255,20 @@ const ManageUsers = () => {
 
   return (
     <div className="flex bg-gray-50 min-h-screen">
-      <Sidebar />
-      <ToastContainer />
-      <div className="flex-1 p-6 overflow-y-auto max-h-screen">
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+
+      <div className="flex-1 flex flex-col w-full overflow-y-auto">
+        {/* Mobile topbar */}
+        <div className="p-4 bg-white shadow-md md:hidden flex justify-between items-center">
+          <h1 className="text-xl font-bold text-gray-800">Manage Users</h1>
+          <button onClick={() => setSidebarOpen(true)}>
+            <Menu size={24} />
+          </button>
+        </div>
+
+        {/* Main content */}
+        <div className="p-6">
+        <ToastContainer />
         <h2 className="text-3xl font-bold text-[#2563eb] mb-6">Manage Users</h2>
 
         {/* Add New User Form */}
@@ -487,6 +499,7 @@ const ManageUsers = () => {
             </div>
           </div>
         )}
+        </div>
       </div>
     </div>
   );
