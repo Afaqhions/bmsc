@@ -11,7 +11,7 @@ const Footer = () => {
           <h2 className="text-2xl font-bold mb-4">CampaignSoft</h2>
           <p className="text-sm">
             A complete campaign management solution to simplify campaign tracking,
-            location coordination, and billing — all in one dashboard.
+            location coordination, and tracking of staff & clients — all in one dashboard.
           </p>
         </div>
 
@@ -42,12 +42,12 @@ const Footer = () => {
           <h3 className="text-lg font-semibold mb-4">Contact Us</h3>
           <ul className="text-sm space-y-2">
             <li>
-              Email: <a href="mailto:support@campaignsoft.com" className="hover:text-yellow-300 transition duration-300">support@campaignsoft.com</a>
+              Email: <a href="mailto:m.afaqpak@gmail.com" className="hover:text-yellow-300 transition duration-300">m.afaqpak@gmail.com</a>
             </li>
             <li>
-              Phone: <a href="tel:+923001234567" className="hover:text-yellow-300 transition duration-300">+92 300 1234567</a>
+              Phone: <a href="tel:+923097876497" className="hover:text-yellow-300 transition duration-300">+92 309 7876497</a>
             </li>
-            <li>Location: Karachi, Pakistan</li>
+            <li>Location: Lahore | Karachi, Pakistan</li>
           </ul>
         </div>
 
