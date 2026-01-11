@@ -1110,9 +1110,21 @@ const ManageCampaigns = () => {
                   className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 >
                   <option value="">-- Select City --</option>
-                  {CITY_OPTIONS.map((city) => (
-                    <option key={city} value={city}>{city}</option>
-                  ))}
+                  {(() => {
+                    const currentCampaign = campaigns.find(c => c._id === uploadCampaignId);
+                    if (!currentCampaign || !currentCampaign.selectedBoards) return null;
+                    
+                    // Extract unique cities from the campaign's selected boards
+                    const campaignCities = [...new Set(
+                      currentCampaign.selectedBoards
+                        .map(b => typeof b === 'object' ? b.City : null)
+                        .filter(Boolean)
+                    )].sort();
+                    
+                    return campaignCities.map((city) => (
+                      <option key={city} value={city}>{city}</option>
+                    ));
+                  })()}
                 </select>
               </div>
 

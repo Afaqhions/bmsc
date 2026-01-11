@@ -422,7 +422,7 @@ const ManageBoards = () => {
                             <option value="backlit">Backlit</option>
                             <option value="frontlit">Frontlit</option>
                             <option value="creative">Creative</option>
-                            <option value="digital stream">Digital Streamers</option>
+                            <option value="digital stream">Digital Stream</option>
                             <option value="screen digital">Screen Digital</option>
                             <option value="mall digital screen">Mall Digital Screen</option>
                           </select>
