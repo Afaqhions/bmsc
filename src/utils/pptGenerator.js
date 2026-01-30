@@ -353,43 +353,67 @@ export const generateCampaignPPT = async (campaign, images) => {
 
       // === Thank You Slide ===
       const thankYouSlide = pptx.addSlide();
-      thankYouSlide.background = { color: '#F0F4F8' };
 
-      // Accent bar
-      thankYouSlide.addShape('rect', {
+      // Beautiful Gradient Background
+      thankYouSlide.background = { fill: '#1E40AF' }; // Solid fallback
+
+      // Decorative Circle 1
+      thankYouSlide.addShape('ellipse', {
+        x: 7.0,
+        y: -1.0,
+        w: 5.0,
+        h: 5.0,
+        fill: { color: '#3B82F6', transparency: 80 },
+      });
+
+      // Decorative Circle 2
+      thankYouSlide.addShape('ellipse', {
+        x: -2.0,
+        y: 4.0,
+        w: 6.0,
+        h: 6.0,
+        fill: { color: '#60A5FA', transparency: 90 },
+      });
+
+      // Main Text Content
+      thankYouSlide.addText('THANK YOU', {
         x: 0,
-        y: 0,
-        w: '5%',
-        h: '100%',
-        fill: { color: '#1E40AF' },
-      });
-
-      thankYouSlide.addText('Thank You!', {
-        x: 1,
-        y: 1.8,
-        w: '80%',
-        fontSize: 48,
+        y: 2.2,
+        w: '100%',
+        fontSize: 54,
         bold: true,
-        color: '#1F2937',
+        color: '#FFFFFF',
         align: 'center',
+        fontFace: 'Arial',
+        charSpacing: 2,
       });
 
-      thankYouSlide.addText('We appreciate your business.', {
-        x: 1,
-        y: 2.8,
-        w: '80%',
-        fontSize: 24,
-        color: '#4B5563',
-        align: 'center',
+      thankYouSlide.addShape('line', {
+        x: 4.0,
+        y: 3.2,
+        w: 2.0,
+        h: 0,
+        line: { color: '#60A5FA', width: 2 },
       });
 
-      thankYouSlide.addText(`Campaign: ${campaign.name}`, {
-        x: 1,
-        y: 4.5,
-        w: '80%',
+      thankYouSlide.addText('We appreciate your partnership in this campaign.', {
+        x: 0,
+        y: 3.6,
+        w: '100%',
+        fontSize: 20,
+        color: '#DBEAFE',
+        align: 'center',
+        italic: true,
+      });
+
+      thankYouSlide.addText(campaign.name, {
+        x: 0,
+        y: 4.8,
+        w: '100%',
         fontSize: 14,
-        color: '#6B7280',
+        color: '#93C5FD',
         align: 'center',
+        bold: true,
       });
 
       const blob = await pptx.write('blob');
