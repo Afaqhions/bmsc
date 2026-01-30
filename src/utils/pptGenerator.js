@@ -12,9 +12,38 @@ export const generateCampaignPPT = async (campaign, images) => {
       pptx.author = 'Campaign Report Generator';
       pptx.title = `Campaign Report - ${campaign.name}`;
 
+      // === Load Logo ===
+      let logoDataUrl = null;
+      try {
+        const logoResponse = await fetch(thirdeyeLogo);
+        if (logoResponse.ok) {
+          const logoBlob = await logoResponse.blob();
+          const reader = new FileReader();
+          logoDataUrl = await new Promise((res, rej) => {
+            reader.onload = () => res(reader.result);
+            reader.onerror = rej;
+            reader.readAsDataURL(logoBlob);
+          });
+        }
+      } catch (logoError) {
+        console.error('Error loading logo:', logoError);
+      }
+
       // === Title Slide ===
       const slide1 = pptx.addSlide();
       slide1.background = { color: '#F0F4F8' };
+
+      // Add Logo to Title Slide
+      if (logoDataUrl) {
+        slide1.addImage({
+          data: logoDataUrl,
+          x: 8.5,
+          y: 0.2,
+          w: 1.2,
+          h: 0.6,
+          sizing: { type: 'contain', w: 1.2, h: 0.6 },
+        });
+      }
 
       // Accent bar
       slide1.addShape('rect', {
@@ -90,6 +119,18 @@ export const generateCampaignPPT = async (campaign, images) => {
       for (let i = 0; i < images.length; i++) {
         const image = images[i];
         const slide = pptx.addSlide();
+
+        // Add Logo to each Image Slide
+        if (logoDataUrl) {
+          slide.addImage({
+            data: logoDataUrl,
+            x: 8.5,
+            y: 0.1,
+            w: 1.2,
+            h: 0.4,
+            sizing: { type: 'contain', w: 1.2, h: 0.4 },
+          });
+        }
 
         try {
           const imageUrl = image.imageUrl || image.url;
@@ -194,35 +235,22 @@ export const generateCampaignPPT = async (campaign, images) => {
         fill: { color: '00B050' }, // Professional Green
       });
 
-      // Add Logo Image
-      try {
-        const logoResponse = await fetch(thirdeyeLogo);
-        if (logoResponse.ok) {
-          const logoBlob = await logoResponse.blob();
-          const reader = new FileReader();
-          const logoDataUrl = await new Promise((res, rej) => {
-            reader.onload = () => res(reader.result);
-            reader.onerror = rej;
-            reader.readAsDataURL(logoBlob);
-          });
-
-          thankYouSlide.addImage({
-            data: logoDataUrl,
-            x: '37.5%', // Centered horizontally (100-25)/2
-            y: 1.5,
-            w: 2.5,
-            h: 1.2,
-            sizing: { type: 'contain', w: 2.5, h: 1.2 },
-          });
-        }
-      } catch (logoError) {
-        console.error('Error adding logo to Thank You slide:', logoError);
+      // Add Centered/Resized Logo Image to Thank You Slide
+      if (logoDataUrl) {
+        thankYouSlide.addImage({
+          data: logoDataUrl,
+          x: 3.0, // (10-4)/2 = 3.0 inches (Centered in 10-inch width)
+          y: 0.8,
+          w: 4.0,
+          h: 2.0,
+          sizing: { type: 'contain', w: 4.0, h: 2.0 },
+        });
       }
 
       // Main Text Content
       thankYouSlide.addText('THANK YOU', {
         x: 0,
-        y: 3.2,
+        y: 3.5,
         w: '100%',
         fontSize: 60,
         bold: true,
