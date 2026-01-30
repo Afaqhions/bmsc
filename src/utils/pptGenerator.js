@@ -33,15 +33,15 @@ export const generateCampaignPPT = async (campaign, images) => {
       const slide1 = pptx.addSlide();
       slide1.background = { color: '#F0F4F8' };
 
-      // Add Logo to Title Slide
+      // Add Logo to Title Slide (Top Right - Adjusted size/position)
       if (logoDataUrl) {
         slide1.addImage({
           data: logoDataUrl,
-          x: 8.5,
+          x: 8.2,
           y: 0.2,
-          w: 1.2,
-          h: 0.6,
-          sizing: { type: 'contain', w: 1.2, h: 0.6 },
+          w: 1.5,
+          h: 0.75,
+          sizing: { type: 'contain', w: 1.5, h: 0.75 },
         });
       }
 
@@ -120,15 +120,15 @@ export const generateCampaignPPT = async (campaign, images) => {
         const image = images[i];
         const slide = pptx.addSlide();
 
-        // Add Logo to each Image Slide
+        // Add Logo to each Image Slide (Integrated into Info Box area)
         if (logoDataUrl) {
           slide.addImage({
             data: logoDataUrl,
-            x: 8.5,
+            x: 8.0,
             y: 0.1,
-            w: 1.2,
+            w: 1.1,
             h: 0.4,
-            sizing: { type: 'contain', w: 1.2, h: 0.4 },
+            sizing: { type: 'contain', w: 1.1, h: 0.4 },
           });
         }
 
@@ -235,22 +235,22 @@ export const generateCampaignPPT = async (campaign, images) => {
         fill: { color: '00B050' }, // Professional Green
       });
 
-      // Add Centered/Resized Logo Image to Thank You Slide
+      // Add Centered/Resized Logo Image to Thank You Slide (Even cleaner centering)
       if (logoDataUrl) {
         thankYouSlide.addImage({
           data: logoDataUrl,
-          x: 3.0, // (10-4)/2 = 3.0 inches (Centered in 10-inch width)
+          x: 2.75, // Centered (10 - 4.5) / 2
           y: 0.8,
-          w: 4.0,
-          h: 2.0,
-          sizing: { type: 'contain', w: 4.0, h: 2.0 },
+          w: 4.5,
+          h: 2.2,
+          sizing: { type: 'contain', w: 4.5, h: 2.2 },
         });
       }
 
       // Main Text Content
       thankYouSlide.addText('THANK YOU', {
         x: 0,
-        y: 3.5,
+        y: 3.6,
         w: '100%',
         fontSize: 60,
         bold: true,
