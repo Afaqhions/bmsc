@@ -182,7 +182,6 @@
 //   });
 // };
 
-
 import pptxgen from 'pptxgenjs';
 
 export const generateCampaignPPT = async (campaign, images) => {
