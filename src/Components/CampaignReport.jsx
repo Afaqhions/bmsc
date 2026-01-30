@@ -407,8 +407,6 @@
 
 
 
-
-
 import React, { useState, useEffect } from 'react';
 import {
   FaMapMarkerAlt,
@@ -649,66 +647,75 @@ const CampaignReport = ({ campaign, images }) => {
       // === Thank You Slide ===
       const thankYouSlide = pptx.addSlide();
 
-      // Beautiful Gradient Background
-      thankYouSlide.background = { fill: '#1E40AF' }; // Solid fallback
-
-      // Decorative Circle 1
-      thankYouSlide.addShape('ellipse', {
-        x: 7.0,
-        y: -1.0,
-        w: 5.0,
-        h: 5.0,
-        fill: { color: '#3B82F6', transparency: 80 },
+      // Background Colors: Red (Left), Blue (Middle), Green (Right)
+      thankYouSlide.addShape('rect', {
+        x: 0,
+        y: 0,
+        w: '33.33%',
+        h: '100%',
+        fill: { color: 'C00000' }, // Professional Red
+      });
+      thankYouSlide.addShape('rect', {
+        x: '33.33%',
+        y: 0,
+        w: '33.34%',
+        h: '100%',
+        fill: { color: '0070C0' }, // Professional Blue
+      });
+      thankYouSlide.addShape('rect', {
+        x: '66.67%',
+        y: 0,
+        w: '33.33%',
+        h: '100%',
+        fill: { color: '00B050' }, // Professional Green
       });
 
-      // Decorative Circle 2
-      thankYouSlide.addShape('ellipse', {
-        x: -2.0,
-        y: 4.0,
-        w: 6.0,
-        h: 6.0,
-        fill: { color: '#60A5FA', transparency: 90 },
-      });
+      // Add Logo Image
+      try {
+        const logoUrl = 'https://www.thirdeye.com.pk/Assets/Images/Logomain.png';
+        const logoResponse = await fetch(logoUrl);
+        if (logoResponse.ok) {
+          const logoBlob = await logoResponse.blob();
+          const reader = new FileReader();
+          const logoDataUrl = await new Promise((res, rej) => {
+            reader.onload = () => res(reader.result);
+            reader.onerror = rej;
+            reader.readAsDataURL(logoBlob);
+          });
+
+          thankYouSlide.addImage({
+            data: logoDataUrl,
+            x: '37.5%', // Centered horizontally (100-25)/2
+            y: 1.5,
+            w: 2.5,
+            h: 1.2,
+            sizing: { type: 'contain', w: 2.5, h: 1.2 },
+          });
+        }
+      } catch (logoError) {
+        console.error('Error adding logo to Thank You slide:', logoError);
+      }
 
       // Main Text Content
       thankYouSlide.addText('THANK YOU', {
         x: 0,
-        y: 2.2,
+        y: 3.2,
         w: '100%',
-        fontSize: 54,
+        fontSize: 60,
         bold: true,
-        color: '#FFFFFF',
+        color: 'FFFFFF',
         align: 'center',
         fontFace: 'Arial',
-        charSpacing: 2,
-      });
-
-      thankYouSlide.addShape('line', {
-        x: 4.0,
-        y: 3.2,
-        w: 2.0,
-        h: 0,
-        line: { color: '#60A5FA', width: 2 },
       });
 
       thankYouSlide.addText('We appreciate your partnership in this campaign.', {
         x: 0,
-        y: 3.6,
+        y: 4.2,
         w: '100%',
-        fontSize: 20,
-        color: '#DBEAFE',
+        fontSize: 22,
+        color: 'FFFFFF',
         align: 'center',
         italic: true,
-      });
-
-      thankYouSlide.addText(campaign.name, {
-        x: 0,
-        y: 4.8,
-        w: '100%',
-        fontSize: 14,
-        color: '#93C5FD',
-        align: 'center',
-        bold: true,
       });
 
       // Save file
