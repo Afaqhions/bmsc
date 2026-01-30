@@ -1,4 +1,5 @@
 import pptxgen from 'pptxgenjs';
+import thirdeyeLogo from '../Logothirdeye.png';
 
 export const generateCampaignPPT = async (campaign, images) => {
   return new Promise(async (resolve, reject) => {
@@ -195,8 +196,7 @@ export const generateCampaignPPT = async (campaign, images) => {
 
       // Add Logo Image
       try {
-        const logoUrl = 'https://www.thirdeye.com.pk/Assets/Images/Logomain.png';
-        const logoResponse = await fetch(logoUrl);
+        const logoResponse = await fetch(thirdeyeLogo);
         if (logoResponse.ok) {
           const logoBlob = await logoResponse.blob();
           const reader = new FileReader();
