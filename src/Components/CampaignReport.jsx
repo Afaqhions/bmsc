@@ -11,6 +11,7 @@ import {
 } from 'react-icons/fa';
 import pptxgen from 'pptxgenjs';
 import LoadingSpinner from './LoadingSpinner';
+import thirdeyeLogo from '../Logothirdeye.png';
 
 const CampaignReport = ({ campaign, images }) => {
   const [generating, setGenerating] = useState(false);
@@ -264,8 +265,7 @@ const CampaignReport = ({ campaign, images }) => {
 
       // Add Logo Image
       try {
-        const logoUrl = 'https://www.thirdeye.com.pk/Assets/Images/Logomain.png';
-        const logoResponse = await fetch(logoUrl);
+        const logoResponse = await fetch(thirdeyeLogo);
         if (logoResponse.ok) {
           const logoBlob = await logoResponse.blob();
           const reader = new FileReader();
